@@ -1,0 +1,61 @@
+<?php
+
+namespace App;
+
+use DateTime;
+use PDO;
+class User
+{
+    private PDO $pdo;
+
+    public function __construct()
+    {
+        $this->pdo = (new DB)->connect();
+    }
+
+    public function createUser(
+        string $username,
+        string $position,
+        string $gender,
+        string $phone
+    ): false|array {
+        $query = "INSERT INTO users (username, position, gender, phone, created_at)
+                  VALUES (:username, :position, :gender, :phone, NOW())";
+        $stmt  = $this->pdo->prepare($query);
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':position', $position);
+        $stmt->bindParam(':gender', $gender);
+        $stmt->bindParam(':phone', $phone);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    public function getUser(int $id)
+    {
+        $query = "SELECT * FROM users WHERE id = :id";
+        $stmt  = $this->pdo->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updateUser(int $id, string $username, string $position, string $gender, string $phone, )
+    {
+        $query = "UPDATE users SET username = :username, position = :position, gender = :gender, phone = :phone, updated_at = NOW()
+            where id = :id";
+        $stmt  = $this->pdo->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':position', $position);
+        $stmt->bindParam(':gender', $gender);
+        $stmt->bindParam(':phone', $phone);
+        $stmt->execute();
+    }
+    public function deleteUser(int $id)
+    {
+        $query = "DELETE FROM users WHERE id = :id";
+        $stmt  = $this->pdo->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+    }
+}
