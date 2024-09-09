@@ -31,13 +31,19 @@ class Ads
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-        public function getAds(int $id)
+        public function getAd(int $id)
         {
             $query = "SELECT * FROM ads WHERE id = :id";
             $stmt = $this->pdo->prepare($query);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+
+        public function getAds()
+        {
+            $query = "SELECT *, ads.address AS address FROM ads JOIN branch ON branch.id = ads.branch_id";
+            return $this->pdo->query($query)->fetchAll();
         }
     public function updateAds(
         int    $id,
